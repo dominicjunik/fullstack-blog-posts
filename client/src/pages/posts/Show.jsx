@@ -11,6 +11,7 @@ function Show() {
     const { id } = useParams()
     const navigate = useNavigate()
     const textRef = useRef()
+    const details = useRef()
 
     async function getPost() {
         try {
@@ -42,6 +43,7 @@ function Show() {
         const created = await axios.post(`/api/comments/${id}`, comment)
         setPost(created.data)
         textRef.current.value = ''
+        details.current.removeAttribute('open')
     }
 
     useEffect(() => {
@@ -82,7 +84,7 @@ function Show() {
                         </>
                         : ''
                     }
-                    <details>
+                    <details ref={details}>
                         <summary style={{ opacity: '.5' }}>Leave a comment:</summary>
                         <form onSubmit={handleCreateComment}>
                             <textarea name="text" id="lc" cols="1" rows="1" ref={textRef}/>
