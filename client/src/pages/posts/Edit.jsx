@@ -19,6 +19,8 @@ function Edit() {
             setPost(response.data)
         } catch(err) {
             console.log(err.message)
+            alert('didnt get data: error 400')
+            navigate(-1)        
         }
     }
 

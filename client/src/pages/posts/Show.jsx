@@ -20,23 +20,35 @@ function Show() {
             setPost(response.data)
         } catch(err) {
             console.log(err.message)
+            alert('didnt get data: error 400')
+            navigate(-1)
         }
     }
 
+
     async function handleDeletePost() {
+        try {
         await axios.delete(`/api/posts/${id}`)
         navigate('/posts')
+        } catch(err) {
+            console.log(err.message)
+        }        
     }
 
     async function handleDeleteComment(commentId) {
-        
-        const deleted = await axios.delete(`/api/comments/${id}/${commentId}`)
-        console.log(deleted)
-        setPost(deleted.data)
+        try {
+            const deleted = await axios.delete(`/api/comments/${id}/${commentId}`)
+            console.log(deleted)
+            setPost(deleted.data)
+        } catch(err) {
+            console.log(err.message)
+        }
     }
 
     async function handleCreateComment(e) {
         e.preventDefault()
+    
+        try {
         const comment = {
             text: textRef.current.value
         }
@@ -45,6 +57,9 @@ function Show() {
         textRef.current.value = ''
         // useRef allows for DOM manipulations
         details.current.removeAttribute('open')
+        } catch(err) {
+            console.log(err.message)
+        }
     }
 
     useEffect(() => {
@@ -68,7 +83,7 @@ function Show() {
                         post?.comments?.length ?
                         <>
                             <div>Comments:</div>
-                            <p>{post.comments.map((comment, i) => 
+                            <div>{post.comments.map((comment, i) => 
                                 <div key={i} className="comm">
                                     <div>{comment.user}</div>
                                     <div>{comment.text}</div>
@@ -80,7 +95,7 @@ function Show() {
                                     }}><input type="submit" value="X"/></form>
                                     <a href={`/comments/${post._id}/${comment._id}`}>+</a>
                                 </div>
-                            )}</p>
+                            )}</div>
                             <br/><br/>
                         </>
                         : ''

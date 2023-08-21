@@ -13,10 +13,10 @@ module.exports.create = async (req, res) => {
                 comments: comment._id
             }
         }, {new: true}).populate('comments')
-        res.json(created)
+        res.status(200).json(created)
     } catch(err) {
         console.log(err)
-        res.json({ error: err.message })
+        res.status(400).json({ error: err.message })
     }
 }
 
@@ -32,10 +32,10 @@ module.exports.delete = async (req, res) => {
                 comments: req.params.commentId
             }
         }, {new: true}).populate('comments')
-        res.json(deleted)
+        res.status(200).json(deleted)
     } catch(err) {
         console.log(err.message)
-        res.json({ error: err.message })
+        res.status(400).json({ error: err.message })
     }
 }
 
@@ -43,10 +43,10 @@ module.exports.index = async (req, res) => {
     // target the comments property 
     try {
         const post = await Posts.findById(req.params.postId).populate('comments')
-        res.json(post.comments)
+        res.status(200).json(post.comments)
     }  catch(err) {
         console.log(err.message)
-        res.json({ error: err.message })
+        res.status(400).json({ error: err.message })
     }
 }
 
@@ -54,10 +54,10 @@ module.exports.show = async (req, res) => {
     // find the post and filter it's comments property array
     try {
         const comment = await Comments.findById(req.params.commentId)
-        res.json(comment)
+        res.status(200).json(comment)
     } catch(err) {
         console.log(err.message)
-        res.json({ error: err.message })
+        res.status(400).json({ error: err.message })
     }
 }
 
@@ -65,9 +65,9 @@ module.exports.update = async (req, res) => {
     // update a comment by updating an item in the comments property in post
     try {
         const updatedPost = await Comments.findByIdAndUpdate(req.params.commentId, req.body, {new: true})
-        res.json(updatedPost)
+        res.status(200).json(updatedPost)
     } catch(err) {
         console.log(err.message)
-        res.json({ error: err.message })
+        res.status(400).json({ error: err.message })
     }
 }

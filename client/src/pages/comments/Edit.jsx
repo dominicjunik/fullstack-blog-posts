@@ -15,18 +15,27 @@ function EditComment() {
             const response = await axios.get(`/api/comments/${postId}/${commentId}`)
             console.log(response.data)
             setComment(response.data)
+            
         } catch(err) {
-            console.log(err.message)
+            console.log(err.message) 
+            alert('didnt get data: error 400')
+            navigate(-1)           
         }
     }
-
+    
+    
     async function handleUpdate(e) {
         e.preventDefault()
-        const newComment = {
-            text: textRef.current.value
+        try {
+            const newComment = {
+                text: textRef.current.value
+            }
+            await axios.put(`/api/comments/${postId}/${commentId}`, newComment)
+            navigate(`/posts/${postId}`)
+        } catch(err) {
+            console.log(err.message)
+           
         }
-        await axios.put(`/api/comments/${postId}/${commentId}`, newComment)
-        navigate(`/posts/${postId}`)
 
     }
 
