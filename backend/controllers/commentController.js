@@ -7,13 +7,13 @@ module.exports.create = async (req, res) => {
         // create a document in our comments collection
         const comment = await Comments.create(req.body)
         // find the post
-        await Posts.findByIdAndUpdate(req.params.postId, {
+        const created = await Posts.findByIdAndUpdate(req.params.postId, {
             // push the new comment document's id
             $push: {
                 comments: comment._id
             }
-        })
-        res.json(comment)
+        }, {new: true}).populate('comments')
+        res.json(created)
     } catch(err) {
         console.log(err)
         res.json({ error: err.message })
@@ -26,13 +26,13 @@ module.exports.delete = async (req, res) => {
         // first use the comment id to delete the comment from the comments collection
         await Comments.findByIdAndDelete(req.params.commentId)
         // then use the post id to find the post
-        await Posts.findByIdAndUpdate(req.params.postId, {
+        const deleted = await Posts.findByIdAndUpdate(req.params.postId, {
             // pull/remeove the reference id of the comment we deleted
             $pull: {
                 comments: req.params.commentId
             }
-        })
-        res.json({ message: "successfully deleted" })
+        }, {new: true}).populate('comments')
+        res.json(deleted)
     } catch(err) {
         console.log(err.message)
         res.json({ error: err.message })

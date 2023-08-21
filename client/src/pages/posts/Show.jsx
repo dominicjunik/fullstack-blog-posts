@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from 'react-router-dom'
 
 import axios from 'axios'
@@ -6,9 +6,11 @@ import axios from 'axios'
 function Show() {
 
     const [post, setPost] = useState({})
+    
 
     const { id } = useParams()
     const navigate = useNavigate()
+    const textRef = useRef()
 
     async function getPost() {
         try {
@@ -25,9 +27,28 @@ function Show() {
         navigate('/posts')
     }
 
+    async function handleDeleteComment(commentId) {
+        
+        const deleted = await axios.delete(`/api/comments/${id}/${commentId}`)
+        console.log(deleted)
+        setPost(deleted.data)
+    }
+
+    async function handleCreateComment(e) {
+        e.preventDefault()
+        const comment = {
+            text: textRef.current.value
+        }
+        const created = await axios.post(`/api/comments/${id}`, comment)
+        setPost(created.data)
+        textRef.current.value = ''
+    }
+
     useEffect(() => {
         getPost()
     }, [])
+
+
 
     if (!post.subject) {
         return <div>Loading...</div>
@@ -48,7 +69,12 @@ function Show() {
                                 <div key={i} className="comm">
                                     <div>{comment.user}</div>
                                     <div>{comment.text}</div>
-                                    <form action={`/comments/${post._id}/${comment._id}?_method=DELETE`} method="POST"><input type="submit" value="X"/></form>
+                                    <form onSubmit={(e) => {
+                                        e.preventDefault()
+                                        handleDeleteComment(comment._id)
+                        
+                                    
+                                    }}><input type="submit" value="X"/></form>
                                     <a href={`/comments/${post._id}/${comment._id}`}>+</a>
                                 </div>
                             )}</p>
@@ -58,8 +84,8 @@ function Show() {
                     }
                     <details>
                         <summary style={{ opacity: '.5' }}>Leave a comment:</summary>
-                        <form action={`/comments/${post._id}`} method="POST">
-                            <textarea name="text" id="lc" cols="1" rows="1" />
+                        <form onSubmit={handleCreateComment}>
+                            <textarea name="text" id="lc" cols="1" rows="1" ref={textRef}/>
                             <button>Comment</button>
                         </form>
                     </details>
