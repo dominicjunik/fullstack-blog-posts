@@ -43,6 +43,7 @@ function Show() {
         const created = await axios.post(`/api/comments/${id}`, comment)
         setPost(created.data)
         textRef.current.value = ''
+        // useRef allows for DOM manipulations
         details.current.removeAttribute('open')
     }
 
